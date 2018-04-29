@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kk.ssm.dao.ICollectSongsDao">
+    <resultMap id="BaseResultMap" type="com.kk.ssm.entity.CollectSongs">
+        <result column="songId" property="songId" jdbcType="INTEGER"/>
+        <result column="songName" property="songName" jdbcType="VARCHAR"/>
+        <result column="singer" property="singer" jdbcType="VARCHAR"/>
+        <result column="album" property="album" jdbcType="VARCHAR"/>
+        <result column="songUrl" property="songUrl" jdbcType="VARCHAR"/>
+        <result column="usernumber" property="usernumber" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getCollectSongs" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT song.songId,songName,singer,album,songUrl,user.usernumber
+        FROM song,user,collectsongs
+        WHERE collectsongs.usernumber = #{usernumber,jdbcType=INTEGER} AND user.usernumber=collectsongs.usernumber AND song.songId=collectsongs.songId;
+    </select>
+
+    <insert id="collectionSong">
+        INSERT INTO collectsongs(songId, usernumber)
+        VALUES
+            (#{songId,jdbcType=INTEGER},#{usernumber,jdbcType=INTEGER})
+    </insert>
+
+    <delete id="deleteCollectSong">
+        DELETE
+        FROM collectsongs
+        WHERE songId = #{songId,jdbcType=INTEGER} AND usernumber = #{usernumber,jdbcType=INTEGER};
+    </delete>
+
+    <select id="findCollectSong" resultType="com.kk.ssm.entity.CollectSongs">
+        SELECT *
+        FROM collectsongs,song,user
+        WHERE collectsongs.songId = #{songId,jdbcType=INTEGER} AND collectsongs.usernumber = #{usernumber,jdbcType=INTEGER}
+              AND user.usernumber=collectsongs.usernumber AND song.songId=collectsongs.songId;
+    </select>
+
+</mapper>

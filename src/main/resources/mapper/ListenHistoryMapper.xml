@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kk.ssm.dao.IListenHistoryDao">
+    <resultMap id="BaseResultMap" type="com.kk.ssm.entity.ListenHistory">
+        <result column="songId" property="songId" jdbcType="INTEGER"/>
+        <result column="songName" property="songName" jdbcType="VARCHAR"/>
+        <result column="singer" property="singer" jdbcType="VARCHAR"/>
+        <result column="album" property="album" jdbcType="VARCHAR"/>
+        <result column="songUrl" property="songUrl" jdbcType="VARCHAR"/>
+        <result column="userNumber" property="userNumber" jdbcType="INTEGER"/>
+        <result column="listenTime" property="listenTime" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getListenHistory" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT songName,singer,album,listenTime
+        FROM song,listenhistory
+        WHERE userNumber = #{userNumber,jdbcType=INTEGER} AND song.songId=listenhistory.songId
+    </select>
+
+    <select id="findLH" resultType="com.kk.ssm.entity.ListenHistory">
+        SELECT songId, userNumber, listenTime
+        FROM listenhistory
+        WHERE songId = #{songId,jdbcType=INTEGER} AND userNumber = #{userNumber,jdbcType=INTEGER}
+    </select>
+
+    <update id="updateLT">
+        UPDATE listenhistory,song
+        SET listenTime = listenTime + 1,popular = popular + 1
+        WHERE song.songId = #{songId,jdbcType=INTEGER} AND userNumber = #{userNumber,jdbcType=INTEGER} AND song.songId = listenhistory.songId
+    </update>
+
+    <insert id="insertLH">
+        INSERT INTO listenhistory VALUES (#{songId,jdbcType=INTEGER},#{userNumber,jdbcType=INTEGER},1)
+    </insert>
+
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kk.ssm.dao.IUserCommentDao">
+    <resultMap id="BaseResultMap" type="com.kk.ssm.entity.UserComment">
+        <result column="songId" property="songId" jdbcType="INTEGER"/>
+        <result column="commentTime" property="commentTime" jdbcType="VARCHAR"/>
+        <result column="commentInf" property="commentInf" jdbcType="VARCHAR"/>
+        <result column="userNumber" property="userNumber" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="findByUser" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT *
+        FROM usercomment
+        WHERE userNumber = #{userNumber,jdbcType=INTEGER}
+    </select>
+
+    <select id="findBySong" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT *
+        FROM usercomment
+        WHERE songId = #{songId,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByUser" parameterType="java.lang.Integer">
+        DELETE
+        FROM usercomment
+        WHERE commentId = #{commentId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="addComment" parameterType="com.kk.ssm.entity.UserComment">
+        INSERT INTO usercomment(songId, commentTime, commentInf, userNumber)
+        VALUES (#{songId,jdbcType=INTEGER}, #{commentTime,jdbcType=VARCHAR},
+                #{commentInf,jdbcType=VARCHAR}, #{userNumber,jdbcType=INTEGER})
+    </insert>
+
+</mapper>

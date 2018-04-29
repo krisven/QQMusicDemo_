@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+         http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+    <absolute-ordering/>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+    <!--配置spring-->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <!-- 当 springMVC配置文件中  通过注解引入了spring的配置文件时，则可以配置spring的xml配置文件-->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+
+    <!-- 配置springMVC -->
+    <servlet>
+        <servlet-name>dispatcherServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <!-- 该配置文件一定是包含springMVC所有属性配置得配置文件 -->
+            <param-value>classpath:dispatcher-servlet.xml</param-value>
+        </init-param>
+        <async-supported>true</async-supported>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>dispatcherServlet</servlet-name>
+        <!-- 默认匹配所有的请求 -->
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <!--登录过滤器-->
+    <filter>
+        <filter-name>login</filter-name>
+        <filter-class>com.kk.ssm.filter.LoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>login</filter-name>
+        <url-pattern>/collect-music.html</url-pattern>
+    </filter-mapping>
+
+    <!--监听多用户，设置session的time_out时间-->
+    <listener>
+        <listener-class>com.kk.ssm.listener.OnlineUserListener</listener-class>
+    </listener>
+    <session-config>
+        <session-timeout>20</session-timeout>
+    </session-config>
+</web-app>

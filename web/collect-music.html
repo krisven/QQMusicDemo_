@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title></title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/jquery-3.1.0.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <style>
+        *{
+            moz-user-select: -moz-none;
+            -moz-user-select: none;
+            -o-user-select:none;
+            -khtml-user-select:none;
+            -webkit-user-select:none;
+            -ms-user-select:none;
+            user-select:none;
+        }
+        @font-face {font-family: 'iconfont';
+            src: url('font/iconfont.eot'); /* IE9*/
+            src: url('font/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+            url('font/iconfont.woff') format('woff'), /* chrome、firefox */
+            url('font/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+            url('font/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */
+        }
+
+        .iconfont{font-family:"iconfont" !important;
+            font-style:normal;
+            -webkit-font-smoothing: antialiased;
+            -webkit-text-stroke-width: 0.05rem;
+        }
+        .table{
+            cursor: default;
+        }
+
+        .table{
+            cursor: default;
+        }
+
+        .collect{
+            font-size: 2.5rem;
+            position: relative;
+            bottom:0.3rem;
+            right: 1rem;
+        }
+
+        .listen{
+            font-size: 1.9rem;
+            position: relative;
+            bottom:0.5rem;
+        }
+
+        .collect-active{
+            color: #dd0000;
+        }
+
+
+        .collect,.listen{
+            cursor: pointer;
+        }
+
+        .song-id{
+            display:none;
+        }
+
+        .song-url{
+            display:none;
+        }
+
+        .active{
+            background: #e8e8e8;
+        }
+
+        .collect-state{
+            display: none;
+        }
+    </style>
+</head>
+<body ng-app="page-content" ng-controller="page-ctrl">
+<script>
+    var pageContent=angular.module("page-content",[]);
+    function collectionSong(data){
+        $.ajax({
+            type:"post",
+            url:"/collect/collection",
+            async:true,
+            data:{
+                songId:data.songId
+            },
+            success:function(msg){
+                var result=msg.result;
+                console.log(result);
+                if(result=='unlogin'){
+                    window.parent.postMessage("login","/");
+                }
+            }
+        });
+    }
+
+    pageContent.controller('page-ctrl',function($scope,$http){
+        function init(){
+            $http({
+                method:"GET",
+                url:"/collect/songs"
+            }).then(function(response){
+                console.log(response);
+                index=0;
+                if(response.data==""){
+                    console.log("1");
+                    window.parent.postMessage("login","/");
+                }
+                var songs=response.data;
+                $scope.songs=songs;
+                $scope.$applyAsync();
+            });
+        }
+
+        $(document).ready(function(){
+            init();
+
+        });
+    });
+
+
+    $(document).on('click','.collect',function(){
+        var playingSongId=$(this).parent().parent().find('.song-id').text();
+        var usernumber=$(this).find('.collect-state').text();
+        console.log(usernumber);
+        collectionSong({'songId':playingSongId});
+        if(usernumber!=0){
+            $(this).html('<span class="collect-state">0</span>&#xe6c1;');
+        }else{
+            $(this).html('<span class="collect-state">'+usernumber+'</span><span class="collect-active">&#xe6c0;</span>');
+        }
+    });
+</script>
+<div class="container" style="width: 100%">
+    <table class="table">
+        <thead>
+        <tr>
+            <th></th>
+            <th>已收藏</th>
+            <th>音乐标题</th>
+            <th>歌手</th>
+            <th>专辑</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="song in songs">
+            <td class="song-id">{{song.songId}}</td>
+            <td class="song-url">{{song.songUrl}}</td>
+            <td >{{$index<9?"0":""}}<span class="index">{{$index+1}}</span></td>
+            <td style="padding-left: 25px"><span class="iconfont collect"><span class="collect-state">{{song.usernumber}}</span>{{song.usernumber!=0?'':'&#xe6c1;'}}<span class="collect-active">{{song.usernumber!=0?'&#xe6c0;':''}}</span></span></td>
+            <td class="song-name">{{song.songName}}</td>
+            <td>{{song.singer}}</td>
+            <td>{{song.album}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

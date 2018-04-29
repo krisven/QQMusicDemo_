@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kk.ssm.dao.ISongDao">
+    <resultMap id="BaseResultMap" type="com.kk.ssm.entity.Song">
+        <result column="songId" property="songId" jdbcType="INTEGER"/>
+        <result column="songName" property="songName" jdbcType="VARCHAR"/>
+        <result column="singer" property="singer" jdbcType="VARCHAR"/>
+        <result column="album" property="album" jdbcType="VARCHAR"/>
+        <result column="popular" property="popular" jdbcType="INTEGER"/>
+        <result column="songUrl" property="songUrl" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 目的：为dao接口方法提供sql语句配置 -->
+    <select id="getAllSongs" resultMap="BaseResultMap">
+        <!-- 具体的sql -->
+        SELECT *
+        FROM song
+        ORDER BY song.popular desc;
+    </select>
+
+    <select id="findSongBySongId" resultType="Song" parameterType="java.lang.Integer">
+        SELECT *
+        FROM song
+        WHERE songId = #{songId,jdbcType=INTEGER}
+    </select>
+
+</mapper>
